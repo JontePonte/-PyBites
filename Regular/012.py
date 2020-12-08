@@ -25,4 +25,9 @@ USERS = (julian, bob, pybites)
 # define exception classes here
 
 def get_secret_token(username):
-    pass
+    if not username in USERS:
+        raise UserDoesNotExist
+    return SECRET
+
+
+print(get_secret_token(pybites))
