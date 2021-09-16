@@ -24,6 +24,7 @@ user is on the system and logged in, return the function's "welcome back {user}"
 See also the tests for more details. Have fun and enjoy!
 """
 
+import functools
 
 
 known_users = ['bob', 'julian', 'mike', 'carmen', 'sue']
@@ -31,11 +32,20 @@ loggedin_users = ['mike', 'sue']
 
 
 def login_required(func):
-    def wrapper(*args, **kwargs):
-        print('p')
-        func_val = func(*args, **kwargs)
-        return func_val
-    return wrapper
+    # Fix all nasty decorator side effects
+    @functools.wraps(func)
+    def check_login(*args, **kwargs):
+        # Get function input
+        name = args[0]
+        
+        if name in known_users and name in loggedin_users:
+            return func(*args, **kwargs) # Return function output
+        elif name in known_users:
+            return 'please login'
+        else:
+            return 'please create an account'
+    # Return function output + wrapper
+    return check_login
 
 
 @login_required
